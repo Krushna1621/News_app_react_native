@@ -1,12 +1,30 @@
-import { createContext } from "react";
+import axios from "axios";
+import { createContext, useEffect, useState } from "react";
+import { getNewsAPI } from "./api";
 
 export const NewsContext= createContext()
 
 const Context=({children})=>{
-    return(
-        <Context.Provider>
+    const [news, setNews] = useState([]);
+  const [category, setCategory] = useState("general");
+  const [source, setSource] = useState();
+  const [index, setIndex] = useState(1);
+  const [darkTheme, setDarkTheme] = useState(true);
 
-        </Context.Provider>
+  const fetchNews = async () => {
+    const { data } = await axios.get(getNewsAPI(category));
+    setNews(data);
+    setIndex(1);
+  };
+
+  useEffect(()=>{
+        fetchNews()
+  },[category])
+
+    return(
+        <NewsContext.Provider value={{news,index,setIndex,fetchNews}}>
+           {children}
+        </NewsContext.Provider>
     )
 }
 export default Context;
